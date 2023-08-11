@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Swagger User API",
-    "description": "This is a sample User Server.",
+    "description": "This is a sample of User Server API.",
     "contact": {
       "email": "contatorodabreu@gmail.com"
     },
@@ -15,7 +15,7 @@
   "tags": [
     {
       "name": "Users",
-      "description": "Everything about Users"
+      "description": "Users API"
     }
   ],
   "paths": {
@@ -26,53 +26,30 @@
         "description": "List all available users",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": " successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "admin": {
-                        "type": "boolean"
-                      },
-                      "email": {
-                        "type": "string"
-                      },
-                      "created_at": {
-                        "type": "Date"
-                      },
-                      "updated_at": {
-                        "type": "Date"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
           },
-          "404": {
-            "description": "Category not found"
+          "400": {
+            "description": "User is not an admin"
           },
-          "500": {
-            "description": "Validation exception"
+          "404": {
+            "description": "User not found"
           }
         }
       },
       "post": {
-        "tags": ["Category"],
-        "summary": "Add a new category",
-        "description": "Add a new Cars category",
+        "tags": ["Users"],
+        "summary": "Add a new user",
+        "description": "Add a new user",
         "requestBody": {
-          "name": "category sample",
-          "description": "category description sample",
+          "name": "user sample",
+          "description": "user description sample",
           "content": {
             "application/json": {
               "schema": {
@@ -81,13 +58,13 @@
                   "name": {
                     "type": "string"
                   },
-                  "description": {
+                  "email": {
                     "type": "string"
                   }
                 },
                 "example": {
-                  "name": "category name sample",
-                  "description": "category descripotion sample"
+                  "name": "John Doe",
+                  "email": "joh.doe@email.com"
                 }
               }
             },
@@ -108,81 +85,136 @@
           "201": {
             "description": "Created"
           },
-          "500": {
-            "description": "Category already exists"
+          "400": {
+            "description": "User already exists"
           }
         }
       }
     },
-    "/specifications": {
+    "/users/:userId/": {
       "get": {
-        "tags": ["Specification"],
-        "summary": "List all specifications",
-        "description": "List all specifications",
+        "tags": ["Users"],
+        "summary": "Show user profile",
+        "description": "Get user by Id",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the user",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": " successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/users/:userId/admin": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Set user as an admin",
+        "description": "Set user admin by Id",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the user",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": " successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatedUser"
                 }
               }
             }
           },
           "404": {
-            "description": "Specifications not found"
-          },
-          "500": {
-            "description": "Validation exception"
+            "description": "User not found"
           }
         }
-      },
-      "post": {
-        "tags": ["Specification"],
-        "summary": "Add a new Specification",
-        "description": "Add a new Cars Specification",
-        "requestBody": {
-          "name": "Specification sample",
-          "description": "Specification description sample",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  }
-                },
-                "example": {
-                  "name": "Specification name sample",
-                  "description": "Specification description sample"
-                }
-              }
-            }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "39501d3b-47d9-4bde-a9e8-d193cf37221d"
           },
-          "responses": {
-            "201": {
-              "description": "Created"
-            },
-            "500": {
-              "description": "Specification already exists"
-            }
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@email.com"
+          },
+          "admin": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "created_at": {
+            "type": "Date",
+            "example": "2023/01/02"
           }
+        },
+        "xml": {
+          "name": "user"
+        }
+      },
+      "UpdatedUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "39501d3b-47d9-4bde-a9e8-d193cf37221d"
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "example": "john.doe@email.com"
+          },
+          "admin": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "created_at": {
+            "type": "Date",
+            "example": "2023/01/02"
+          },
+          "updated_at": {
+            "type": "Date",
+            "example": "2023/01/23"
+          }
+        },
+        "xml": {
+          "name": "user"
         }
       }
     }
